@@ -4,15 +4,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView show;
-    private  String[] meal = {"美味蟹堡", "美味薯條", "美味雞塊", "美味可樂", "美味冰淇淋 "};
+    private  String[] meal = {"美味蟹堡", "辣腸堡", "鳳梨堡", "潛艇堡", "麥香雞堡"};
     private boolean[] mealSeclect = {false, false, false, false, false};
+    private int[] mealImages = {R.drawable.st1, R.drawable.st2, R.drawable.st3, R.drawable.st4, R.drawable.st5};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +38,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                StringBuilder selectedItems = new StringBuilder();
-                for (int i = 0; i < mealSeclect.length; i++) {
+                // 將選擇的餐點顯示在 show TextView 上
+                SpannableStringBuilder selectedMeals = new SpannableStringBuilder();
+                for (int i = 0; i < meal.length; i++) {
                     if (mealSeclect[i]) {
-                        selectedItems.append(meal[i]).append("\n");
+                        selectedMeals.append(meal[i]).append(" "); // 在插入圖片之前先插入一個空格
+
+                        // 插入圖片
+                        Drawable drawable = getResources().getDrawable(mealImages[i]); // 從陣列中取出對應的圖片
+                        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                        ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);
+                        selectedMeals.setSpan(imageSpan, selectedMeals.length() - 1, selectedMeals.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+                        selectedMeals.append("\n");
                     }
                 }
-                show.setText(selectedItems.toString());
-                dialog.dismiss();
+                show.setText(selectedMeals);
             }
         });
 
